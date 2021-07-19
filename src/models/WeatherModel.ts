@@ -1,23 +1,22 @@
-import { Weather } from "../redux/reducers/getWeather";
-
-export default class WeatherModel implements Weather {
-    constructor(temp: string,
-        feels_like: string,
-        pressure: string,
-        humidity: string,
+import IWeather from "./IWeather";
+export default class WeatherModel implements IWeather {
+    constructor(temp: number,
+        feels_like: number,
+        pressure: number,
+        humidity: number,
         icon: string,
         wind_speed: number) {
-        this.temp = temp;
-        this.feels_like = feels_like;
+        this.temp = Math.round(temp - 273);
+        this.feels_like = Math.round(feels_like - 273);
         this.pressure = pressure;
         this.humidity = humidity;
         this.icon = icon;
         this.wind_speed = wind_speed;
     }
-    temp: string;
-    feels_like: string;
-    pressure: string;
-    humidity: string;
+    temp: number;
+    feels_like: number;
+    pressure: number;
+    humidity: number;
     icon: string;
     wind_speed: number;
 

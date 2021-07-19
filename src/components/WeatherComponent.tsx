@@ -4,14 +4,14 @@ import { Dimensions } from 'react-native'
 import { Image } from 'react-native'
 import { Easing } from 'react-native'
 import { image_url } from '../constants/url'
-import { Weather } from '../redux/reducers/getWeather'
+import IWeather from '../models/IWeather'
+
 import Row from './Row'
 
-const WeatherComponent: React.FC<Weather> = ({ temp, feels_like, pressure, humidity, icon, wind_speed }) => {
+const WeatherComponent: React.FC<IWeather> = ({ temp, feels_like, pressure, humidity, icon, wind_speed }) => {
     const fadeAnim = React.useRef(new Animated.Value(0)).current;
-    React.useEffect(() => {
-        console.log('mounted');
 
+    React.useEffect(() => {
         Animated.timing(
             fadeAnim,
             {
@@ -26,8 +26,6 @@ const WeatherComponent: React.FC<Weather> = ({ temp, feels_like, pressure, humid
         }
 
     }, [temp, feels_like, pressure, humidity, icon, wind_speed]);
-
-
 
     return (
         <Animated.View style={[styles.container, {
@@ -49,11 +47,11 @@ const WeatherComponent: React.FC<Weather> = ({ temp, feels_like, pressure, humid
                 }}>
                     <Row>
                         <Text style={styles.text}>Temperature:</Text>
-                        <Text style={styles.text}>{temp} K</Text>
+                        <Text style={styles.text}>{temp} C</Text>
                     </Row>
                     <Row>
                         <Text style={styles.text}>Feels like: </Text>
-                        <Text style={styles.text}>{feels_like} K</Text>
+                        <Text style={styles.text}>{feels_like} C</Text>
                     </Row>
                 </View>
             </Row>
@@ -80,6 +78,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Black'
     },
     container: {
+        padding: 10,
+        backgroundColor: 'silver',
         justifyContent: 'center', alignItems: 'center',
         width: Dimensions.get('screen').width * 0.8,
         borderRadius: 2,

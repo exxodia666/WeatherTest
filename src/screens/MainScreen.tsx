@@ -11,25 +11,18 @@ import { getWeatherRequest } from '../redux/actions/getWeather';
 import { status as res_status } from '../constants/status'
 import { ActivityIndicator } from 'react-native-paper';
 import WeatherComponent from '../components/WeatherComponent';
+import getDays from '../utils/getDays';
 
 const MainScreen = () => {
     const [selected, setSelected] = React.useState(0);
-    let i = 0;
-    let days = new Array(5).fill(0);
     const { status, weather } = useAppSelector((state: RootState) => state.weather);
-
-    days = days.map((e, index) => {
-        const date = new Date(new Date().getTime() + (i++) * 24 * 3600000).getDate();
-        if (index === selected)
-            return { date: date, selected: true }
-        return { date: date, selected: false }
-
-    });
     const dispatch = useAppDispatch();
 
     React.useEffect(() => {
         dispatch(getWeatherRequest("Rio"));
     }, []);
+
+    const renderDays = React.useCallback(() => getDays(selected), [selected]);
 
     return (
         <View style={{ justifyContent: 'center', alignItems: 'center', }}>
@@ -39,7 +32,7 @@ const MainScreen = () => {
                 width: '90%'
             }}>
                 <Row>
-                    {days.map((e, index) => <DayButton setSelected={() => setSelected(index)} selected={e.selected} key={e.date} day={e.date} />)}
+                    {renderDays().map((e, index) => <DayButton setSelected={() => setSelected(index)} selected={e.selected} key={e.date} day={e.date} />)}
                 </Row>
             </View>
             {status === res_status.success && <WeatherComponent

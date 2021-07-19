@@ -1,51 +1,41 @@
+import { createReducer, PayloadAction } from '@reduxjs/toolkit';
 import { status } from '../../constants/status';
+import IWeather from '../../models/IWeather';
 import WeatherModel from '../../models/WeatherModel';
-import { getWeatherRequestType, getWeatherErrorType, getWeatherSuccessType, GET_WEATHER_REQUEST, GET_WEATHER_SUCCESS, GET_WEATHER_ERROR } from './../actions/getWeather';
+import { getWeatherError, getWeatherSuccess } from '../actions/getWeather';
+import { getWeatherRequest } from '../actions/getWeather';
 
-
-export interface Weather {
-    temp: string,// Temperature.Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
-    feels_like: string,// This temperature parameter accounts for the human perception of weather.Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
-    pressure: string,// Atmospheric pressure on the sea level by default, hPa
-    humidity: string,// Humidity, %
-    icon: string,// Weather icon id
-    wind_speed: number
-}
 type InitialType = {
     status: status,
-    weather: Weather[]
+    weather: IWeather[]
 }
 const initialState: InitialType = {
     status: status.idle,
     weather: []
 }
+//type ActionsType = typeof getWeatherRequest | typeof getWeatherSuccess | typeof getWeatherError;
 
-type ActionsType = getWeatherRequestType | getWeatherErrorType | getWeatherSuccessType;
-
-export default (state = initialState, action: ActionsType) => {
-    const { type, payload } = action;
-    console.log(type);
-    switch (type) {
-        case GET_WEATHER_REQUEST:
+export const getWeather = createReducer(initialState, (builder) =>
+    builder
+        .addCase(getWeatherRequest, (state, action: PayloadAction<string>) => {
             return { ...state, status: status.pending }
-        case GET_WEATHER_SUCCESS:
-            console.log(payload[0].weather[0].icon);
-            const fetchedWeather = payload.map((e: any) => new WeatherModel(
-                e.main.temp,
-                e.main.feels_like,
-                e.main.pressure,
-                e.main.humidity,
-                e.weather[0].icon,
-                e.wind.speed
-            ));
-
-            return { ...state, status: status.success, weather: fetchedWeather }
-        case GET_WEATHER_ERROR:
+        })
+        .addCase(getWeatherError, (state, action: PayloadAction<string>) => {
             return { ...state, status: status.error }
-        default:
-            return state
-    }
-}
+        })
+        .addCase(getWeatherSuccess, (state, action: PayloadAction<any>) => {
+            const { payload } = action;
+            const fetchedWeather = payload.map(({ main, weather, wind }: any) => new WeatherModel(
+                main.temp,
+                main.feels_like,
+                main.pressure,
+                main.humidity,
+                weather[0].icon,
+                wind.speed
+            ));
+            return { ...state, status: status.success, weather: fetchedWeather }
+        })
+)
 
 
 // e.main.temp Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.

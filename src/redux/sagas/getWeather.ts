@@ -1,19 +1,20 @@
 import { axiosWeather } from './../../services/api/index';
-import { getWeatherRequestType, GET_WEATHER_REQUEST, getWeatherSuccess, getWeatherError } from './../actions/getWeather';
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import { GET_WEATHER_REQUEST, getWeatherSuccess, getWeatherError, getWeatherRequest } from './../actions/getWeather';
+import { call, put, takeLatest } from 'redux-saga/effects'
 
-function* getWeatherWorker(action: getWeatherRequestType) {
+function* getWeatherWorker(action: typeof getWeatherRequest) {
     console.log('worker');
     const { payload } = action;
     try {
-        const { data } = yield call(axiosWeather, payload);
+        const { data, status } = yield call(axiosWeather, payload);
+        if ([5, 4].includes(status.toString()[0])) {
+            throw new Error('Error');
+        }
         yield put(getWeatherSuccess(data.list));
     } catch (e) {
-        console.log(e)
         yield put(getWeatherError(e));
     }
 }
-
 function* getWeatherWatcher() {
     yield takeLatest(GET_WEATHER_REQUEST, getWeatherWorker);
 }

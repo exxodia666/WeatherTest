@@ -1,14 +1,18 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import { select } from 'redux-saga/effects'
+interface IDayButton {
+    day: number,
+    selected: boolean,
+    setSelected: () => void
+}
 
-const DayButton = ({ day, selected, setSelected }: { day: number, selected: boolean, setSelected: () => void }) => {
-    const handleOnPress = () => {
-        console.log('{press}');
-        setSelected();
-    }
+const DayButton: React.FC<IDayButton> = ({ day, selected, setSelected }) => {
     return (
-        <TouchableOpacity onPress={handleOnPress} style={[styles.container, styles.selected_styles(selected)]}><Text style={{ fontFamily: 'Roboto-Black' }}>{day}</Text></TouchableOpacity>
+        <TouchableOpacity
+            onPress={setSelected}
+            style={[styles.container, styles.selected_styles(selected)]}>
+            <Text style={{ fontFamily: 'Roboto-Black' }}>{day}</Text>
+        </TouchableOpacity>
     )
 }
 
@@ -16,7 +20,7 @@ export default DayButton
 
 const styles = StyleSheet.create({
     selected_styles: (selected: boolean) => ({
-        backgroundColor: !selected ? 'white' : 'pink',
+        backgroundColor: !selected ? 'white' : 'silver',
     }),
     container: {
         backgroundColor: 'white',
